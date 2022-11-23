@@ -6,6 +6,8 @@ import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
@@ -21,9 +23,11 @@ public class Agency extends CommonTimeEntity {
     @Column(name = "AGENCY_ID")
     public Long agencyId;
 
+    @NotEmpty
     @Column(name = "CEO_NAME")
     public String ceoName;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "COMPANY_TYPE")
     public CompanyType companyType;
@@ -31,6 +35,7 @@ public class Agency extends CommonTimeEntity {
     @Column(name = "CAREER")
     public int career;
 
+    @NotNull
     @Embedded
     public Address address;
 
@@ -38,11 +43,8 @@ public class Agency extends CommonTimeEntity {
     public String homepageUrl;
 
     @Column(name = "ACTIVE")
-    private int active;
-
-    public Agency(String ceoName) {
-        this.ceoName = ceoName;
-    }
+    @Builder.Default
+    private int active = 1;
 
     //    @OneToMany(mappedBy = "agency")
 //    private List<Agent> agents = new ArrayList<>();

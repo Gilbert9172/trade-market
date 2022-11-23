@@ -1,6 +1,7 @@
 package sports.trademarket.entity.embaddedType;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.Embeddable;
 import static lombok.AccessLevel.PROTECTED;
 
 @Embeddable
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 public class Address {

@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sports.trademarket.dto.CustomUserDetails;
-import sports.trademarket.exceptions.WrongPasswordException;
+import sports.trademarket.exceptions.security.WrongPasswordException;
 import sports.trademarket.repository.AgentRepository;
 import sports.trademarket.service.CustomUserDetailsService;
 

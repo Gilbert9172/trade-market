@@ -127,4 +127,16 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
+
+    /*
+    @Bean
+    public WebSecurityCustomizer configure() {
+        return (web) -> web.ignoring().mvcMatchers(
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/api/login"
+        );
+    }
+    */
+
 }

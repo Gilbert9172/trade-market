@@ -2,8 +2,8 @@ package sports.trademarket.security.handler;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.filter.OncePerRequestFilter;
-import sports.trademarket.exceptions.EmptyTokenException;
-import sports.trademarket.exceptions.NotValidTokenException;
+import sports.trademarket.exceptions.security.EmptyTokenException;
+import sports.trademarket.exceptions.security.NotValidTokenException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

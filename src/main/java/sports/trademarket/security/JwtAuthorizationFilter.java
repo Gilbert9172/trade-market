@@ -8,8 +8,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import sports.trademarket.dto.CustomUserDetails;
 import sports.trademarket.entity.Agent;
 import sports.trademarket.entity.enumType.RoleType;
-import sports.trademarket.exceptions.EmptyTokenException;
-import sports.trademarket.exceptions.NotValidTokenException;
+import sports.trademarket.exceptions.security.EmptyTokenException;
+import sports.trademarket.exceptions.security.NotValidTokenException;
 import sports.trademarket.utililty.JwtUtil;
 
 import javax.servlet.FilterChain;
@@ -26,8 +26,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) throws ServletException {
 
-        String[] EXCLUDE_URL = {"/agent/login", "/join"};
-
+        String[] EXCLUDE_URL = {"/v1/agent/join", "/v1/agency"};
         return Arrays.stream(EXCLUDE_URL).anyMatch(url -> request.getServletPath().startsWith(url));
     }
 

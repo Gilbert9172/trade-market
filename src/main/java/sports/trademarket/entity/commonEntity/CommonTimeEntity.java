@@ -1,7 +1,7 @@
 package sports.trademarket.entity.commonEntity;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
@@ -17,7 +17,7 @@ public abstract class CommonTimeEntity {
     @Column(name = "CREATED_DT", updatable = false)
     private LocalDateTime createdDt;
 
-    @LastModifiedBy
+    @LastModifiedDate
     @Column(name = "MODIFIED_DT")
     private LocalDateTime modifiedDt;
 
