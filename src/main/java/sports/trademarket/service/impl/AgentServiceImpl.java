@@ -21,6 +21,7 @@ import sports.trademarket.service.AgentService;
 import java.io.IOException;
 import java.util.Optional;
 
+import static sports.trademarket.exceptions.spring.ErrorConstants.*;
 import static sports.trademarket.utililty.FileUtil.*;
 import static sports.trademarket.utililty.FileUtil.extractExt;
 
@@ -68,7 +69,7 @@ public class AgentServiceImpl implements AgentService {
     private ProfileImg saveProfileImg(MultipartFile file) {
 
         String orgFileName = Optional.ofNullable(file.getOriginalFilename())
-                .orElseThrow(IllegalFileNameException::new);
+                .orElseThrow(() -> new IllegalFileNameException(illegalFileName));
 
         try {
             ProfileImg img = ProfileImg.builder()

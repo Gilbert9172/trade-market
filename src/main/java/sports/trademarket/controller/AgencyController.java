@@ -38,8 +38,7 @@ public class AgencyController {
     }
 
     @GetMapping("/{agencyId}")
-    public ResponseEntity<ResponseDto<AgencyDto>> getAgencyDetail(@PathVariable Long agencyId)
-            throws NoSuchDataException {
+    public ResponseEntity<ResponseDto<AgencyDto>> getAgencyDetail(@PathVariable Long agencyId) {
 
         Agency agency = agencyService.findAgencyById(agencyId);
         ResponseDto<AgencyDto> result = ResponseDto.of(
