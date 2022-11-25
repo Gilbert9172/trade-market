@@ -26,7 +26,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) throws ServletException {
 
-        String[] EXCLUDE_URL = {"/v1/agent/join", "/v1/agency"};
+        String[] EXCLUDE_URL = {"/v1/agent/join", "/v1/agency", "/v1/email"};
         return Arrays.stream(EXCLUDE_URL).anyMatch(url -> request.getServletPath().startsWith(url));
     }
 
