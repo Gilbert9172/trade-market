@@ -1,13 +1,15 @@
 package sports.trademarket.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 
+import static lombok.AccessLevel.*;
+
 @Builder
-@Getter @Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class EmailDto {
 
     @Email

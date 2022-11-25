@@ -25,17 +25,22 @@ public class MailServiceImpl implements MailService {
 
     final int codeLength = 6;
     final String subject = "안녕하세요 Trade-Market 입니다.";
-    final String text = "이메일 인증을 위한 인증번호는 입니다 ▷ ";
+    final String text = "이메일 인증을 위한 인증번호입니다. >>> ";
 
     @Override
     public void sendMail(EmailDto emailDto) {
 
         String authKey = generateRandomCode(codeLength);
 
-        emailDto.setAuthKey(authKey);
-        emailDto.setSubject(subject);
-        emailDto.setText(text);
-        sendAuthEmail(emailDto);
+
+        EmailDto email = EmailDto.builder()
+                .receiverEmail(emailDto.getReceiverEmail())
+                .authKey(authKey)
+                .subject(subject)
+                .text(text + authKey)
+                .build();
+
+        sendAuthEmail(email);
     }
 
     @Override
