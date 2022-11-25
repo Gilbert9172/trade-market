@@ -10,6 +10,7 @@ import sports.trademarket.dto.AgentJoinDto;
 import sports.trademarket.dto.ResponseDto;
 import sports.trademarket.service.AgentService;
 
+import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.http.HttpStatus.*;
@@ -23,7 +24,7 @@ public class AgentController {
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto<Integer>> joinAgent(
-                            @RequestPart AgentJoinDto agentJoin,
+                            @Valid @RequestPart AgentJoinDto agentJoin,
                             @RequestPart(required = false) MultipartFile profile) throws Exception {
 
         agentService.register(agentJoin, profile);
