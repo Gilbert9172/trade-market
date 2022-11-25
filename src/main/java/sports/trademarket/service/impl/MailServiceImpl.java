@@ -5,6 +5,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import sports.trademarket.dto.EmailDto;
+import sports.trademarket.dto.EmailGenerateDto;
+import sports.trademarket.dto.EmailVerifyDto;
 import sports.trademarket.exceptions.spring.EmailVerifiedException;
 import sports.trademarket.service.MailService;
 import sports.trademarket.utililty.RedisUtil;
@@ -33,41 +35,41 @@ public class MailServiceImpl implements MailService {
         String authKey = generateRandomCode(codeLength);
 
 
-        EmailDto email = EmailDto.builder()
+        EmailGenerateDto generateDto = EmailGenerateDto.builder()
                 .receiverEmail(emailDto.getReceiverEmail())
                 .authKey(authKey)
                 .subject(subject)
                 .text(text + authKey)
                 .build();
 
-        sendAuthEmail(email);
+        sendAuthEmail(generateDto);
     }
 
     @Override
-    public Integer verifyEmail(EmailDto emailDto) {
+    public Integer verifyEmail(EmailVerifyDto verifyDto) {
 
-        String requestEmail = Optional.ofNullable(redisUtil.getData(emailDto.getAuthKey()))
+        String requestEmail = Optional.ofNullable(redisUtil.getData(verifyDto.getAuthKey()))
                 .orElseThrow(() -> new EmailVerifiedException(failedVerifyEmail));
 
-        return isEqal(requestEmail, emailDto.getReceiverEmail()) ? 1 : 0 ;
+        return isEqal(requestEmail, verifyDto.getReceiverEmail()) ? 1 : 0 ;
     }
 
     private boolean isEqal(String receiverEmail, String requestEmail) {
         return requestEmail.equals(receiverEmail);
     }
 
-    private void sendAuthEmail(EmailDto emailDto) {
-        generateAndSendEmail(emailDto);
-        redisUtil.setDataExpire(emailDto.getAuthKey(), emailDto.getReceiverEmail(), 60 * 3L);
+    private void sendAuthEmail(EmailGenerateDto generateDto) {
+        generateAndSendEmail(generateDto);
+        redisUtil.setDataExpire(generateDto.getAuthKey(), generateDto.getReceiverEmail(), 60 * 3L);
     }
 
-    private void generateAndSendEmail(EmailDto emailDto) {
+    private void generateAndSendEmail(EmailGenerateDto generateDto) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
-            helper.setTo(emailDto.getReceiverEmail());
-            helper.setSubject(emailDto.getSubject());
-            helper.setText(emailDto.getText(), true);
+            helper.setTo(generateDto.getReceiverEmail());
+            helper.setSubject(generateDto.getSubject());
+            helper.setText(generateDto.getText(), true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();

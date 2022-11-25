@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sports.trademarket.dto.EmailDto;
+import sports.trademarket.dto.EmailVerifyDto;
 import sports.trademarket.dto.ResponseDto;
 import sports.trademarket.service.MailService;
 
@@ -25,8 +26,8 @@ public class MailController extends CommonController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<ResponseDto<Integer>> verifyEmail(@RequestBody EmailDto emailDto) {
-        return responseMsg(HttpStatus.OK, "인증 완료", mailService.verifyEmail(emailDto));
+    public ResponseEntity<ResponseDto<Integer>> verifyEmail(@RequestBody EmailVerifyDto emailDto) {
+        return responseMsg(HttpStatus.OK, "인증 결과", mailService.verifyEmail(emailDto));
 
     }
 }
