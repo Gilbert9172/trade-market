@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import sports.trademarket.dto.ResponseDto;
+import sports.trademarket.exceptions.spring.EmailVerifiedException;
 import sports.trademarket.exceptions.spring.IllegalFileNameException;
 import sports.trademarket.exceptions.spring.NoSuchDataException;
 import sports.trademarket.exceptions.spring.SaveFileException;
@@ -52,9 +53,9 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(responseDto, responseHeader(), NOT_FOUND);
     }
 
-    @ExceptionHandler({IllegalFileNameException.class})
+    @ExceptionHandler({IllegalFileNameException.class, EmailVerifiedException.class})
     public ResponseEntity<ResponseDto<Integer>> NullPointException(Exception e) {
-        ResponseDto<Integer> responseDto = ResponseDto.of(BAD_REQUEST.value(), illegalFileName, fail);
+        ResponseDto<Integer> responseDto = ResponseDto.of(BAD_REQUEST.value(), e.getMessage(), fail);
         return new ResponseEntity<>(responseDto, responseHeader(), BAD_REQUEST);
     }
 
