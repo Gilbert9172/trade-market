@@ -1,16 +1,18 @@
 package sports.trademarket.entity;
 
-import lombok.Getter;
-import sports.trademarket.entity.commonEntity.CommonTimeEntity;
+import lombok.*;
 
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
 
 @Entity
-@Getter
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @Table(name = "PROFILE_IMG")
-public class ProfileImg extends CommonTimeEntity {
+public class ProfileImg {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "PROFILE_IMG_ID")
@@ -27,8 +29,5 @@ public class ProfileImg extends CommonTimeEntity {
 
     @Column(name = "SAVED_FILE_NM")
     private String savedFileNm;
-
-    @Column(name = "ACTIVE")
-    private int active;
 
 }

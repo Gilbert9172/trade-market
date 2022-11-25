@@ -1,30 +1,40 @@
 package sports.trademarket.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import sports.trademarket.entity.Agent;
-import sports.trademarket.entity.enumType.RoleType;
-import sports.trademarket.repository.AgentRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import sports.trademarket.dto.AgentJoinDto;
+import sports.trademarket.dto.ResponseDto;
+import sports.trademarket.service.AgentService;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/agent")
 public class AgentController {
 
-    private final AgentRepository agentRepository;
+    private final AgentService agentService;
 
     @PostMapping("/join")
-    public void join() {
+    public ResponseEntity<ResponseDto<Integer>> joinAgent(
+                            @RequestPart AgentJoinDto agentJoin,
+                            @RequestPart(required = false) MultipartFile profile) throws Exception {
 
-        Agent testAgent = Agent.builder()
-                .agentName("Gilbert")
-                .roleType(RoleType.ROLE_USER)
-                .email("gilbert9172@naver.com")
-                .password("$2a$04$vRKAgBifZF6x9mF54Cg10ufUbIH3/sQFXXMJtvvYuloSThR1yaM4S")
-                .build();
-        agentRepository.save(testAgent);
+        agentService.register(agentJoin, profile);
+        ResponseDto<Integer> responseDto = ResponseDto.of(OK.value(), "Agent 가입 완료.", 1);
+        return new ResponseEntity<>(responseDto, responseHeader(), OK);
+    }
+
+    private HttpHeaders responseHeader() {
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+        return headers;
     }
 
 }

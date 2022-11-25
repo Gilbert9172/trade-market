@@ -24,6 +24,10 @@ public class Agency extends CommonTimeEntity {
     public Long agencyId;
 
     @NotEmpty
+    @Column(name = "AGENCY_NAME")
+    public String agencyName;
+
+    @NotEmpty
     @Column(name = "CEO_NAME")
     public String ceoName;
 

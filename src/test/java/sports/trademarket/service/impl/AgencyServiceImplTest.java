@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sports.trademarket.entity.Agency;
 import sports.trademarket.entity.embaddedType.Address;
@@ -22,6 +23,7 @@ class AgencyServiceImplTest {
     @Mock
     private AgencyRepository agencyRepository;
 
+    @Spy
     @InjectMocks
     private AgencyServiceImpl agencyServiceImpl;
 
@@ -38,13 +40,16 @@ class AgencyServiceImplTest {
                 .career(10).build();
 
         //given
-        given(agencyRepository.save(agency)).willReturn(agency);
+        given(agencyRepository.save(any())).willReturn(agency);
 
         // when
         Agency registerAgency = agencyServiceImpl.registerAgency(agency);
 
         // then
         assertThat(agency.getCeoName()).isEqualTo(registerAgency.getCeoName());
+
+        // verify
+        verify(agencyServiceImpl, times(1)).registerAgency(agency);
     }
 
     @Test
