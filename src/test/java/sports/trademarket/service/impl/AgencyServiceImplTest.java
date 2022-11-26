@@ -7,7 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sports.trademarket.dto.AgencyJoinDto;
 import sports.trademarket.entity.Agency;
+import sports.trademarket.entity.Agent;
+import sports.trademarket.entity.ProfileImg;
 import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 import sports.trademarket.repository.AgencyRepository;
@@ -31,37 +34,23 @@ class AgencyServiceImplTest {
     @DisplayName("Agency 등록")
     void agencyRegisterTest() throws Exception {
 
-        Address address = new Address("Seoul", "nowon", "lotter");
-
-        Agency agency = Agency.builder()
-                .ceoName("Gilbert")
-                .companyType(CompanyType.MID)
-                .address(address)
-                .career(10).build();
+        Agency agency = testAgencyData();
+        AgencyJoinDto agencyJoinDto = testAgecyJoinData();
 
         //given
         given(agencyRepository.save(any())).willReturn(agency);
 
         // when
-        Agency registerAgency = agencyServiceImpl.registerAgency(agency);
+        agencyServiceImpl.registerAgency(agencyJoinDto);
 
         // then
-        assertThat(agency.getCeoName()).isEqualTo(registerAgency.getCeoName());
-
-        // verify
-        verify(agencyServiceImpl, times(1)).registerAgency(agency);
+         verify(agencyServiceImpl, times(1)).registerAgency(agencyJoinDto);
     }
 
     @Test
     @DisplayName("Agency 상세 조회")
     void findAgencyById() throws Exception {
-        Address address = new Address("seoul", "nowon", "lotteAPT");
-        Agency agency = Agency.builder()
-                .ceoName("gilbert")
-                .companyType(CompanyType.MID)
-                .address(address)
-                .homepageUrl("test@naver.com")
-                .career(10).build();
+        Agency agency = testAgencyData();
 
         //given
         given(agencyRepository.findById(1L)).willReturn(Optional.of(agency));
@@ -71,8 +60,65 @@ class AgencyServiceImplTest {
 
         //then
         assertThat(agency.getCeoName()).isEqualTo(findAgency.getCeoName());
-
     }
 
+    private AgencyJoinDto testAgecyJoinData() {
+        return new AgencyJoinDto(
+                "참좋은 에이전시1",
+                "토마스 킴",
+                CompanyType.MID,
+                "경기도",
+                "의정부",
+                "의정부역 1번 출구",
+                "ChamJoeun@naver.com",
+                7
+        );
+    }
 
+    private Agency testAgencyData() {
+        return Agency.builder()
+                .agencyId(1L)
+                .agencyName("참좋은 에이전씨")
+                .ceoName("gilbert")
+                .companyType(CompanyType.MID)
+                .address(testAddressData())
+                .homepageUrl("test@naver.com")
+                .career(10)
+                .active(1).build();
+    }
+
+    private Agency testAgencyData2() {
+        return Agency.builder()
+                .agencyId(2L)
+                .agencyName("참좋은 에이전씨2")
+                .ceoName("gilbert2")
+                .companyType(CompanyType.BIG)
+                .address(testAddressData())
+                .homepageUrl("test2@naver.com")
+                .career(20)
+                .active(1).build();
+    }
+
+    private Address testAddressData() {
+        return Address.of("seoul", "nowon", "lotteAPT");
+    }
+
+    private Agent testAgentData() {
+        return Agent.builder()
+                .agentId(1L)
+                .agentName("gilbert")
+                .email("gilbert@naver.com")
+                .phone("01012344321")
+                .profileImg(testProfileData())
+                .agency(testAgencyData())
+                .career(3)
+                .password("hashedPassword")
+                .active(1)
+                .build();
+    }
+
+    private ProfileImg testProfileData() {
+        return new ProfileImg(1L, "orgName",".png",
+                "savedPath", "savedFileName");
+    }
 }
