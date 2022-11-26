@@ -12,5 +12,6 @@ public class ErrorConstants {
     public static final String fileSaveFail         = "파일 저장을 실패했습니다.";
     public static final String illegalFileName      = "파일명을 확인해주세요.";
     public static final String failedVerifyEmail    = "이메일 인증실패";
+    public static final String duplicatedAgent      = "중복된 이메일 또는 전화번호입니다.";
 
 }
