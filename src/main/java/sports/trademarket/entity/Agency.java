@@ -38,7 +38,7 @@ public class Agency extends CommonTimeEntity {
     @Embedded
     public Address address;
 
-    @Column(name = "HOMEPAGE_URL")
+    @Column(name = "HOMEPAGE_URL", unique = true)
     public String homepageUrl;
 
     @Column(name = "ACTIVE")

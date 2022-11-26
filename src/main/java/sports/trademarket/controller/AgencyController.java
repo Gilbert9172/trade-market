@@ -12,6 +12,7 @@ import sports.trademarket.service.AgencyService;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.MediaType.*;
 import static sports.trademarket.dto.AgencyDetailDto.*;
 
 @RestController
@@ -21,14 +22,14 @@ public class AgencyController extends CommonController {
 
     private final AgencyService agencyService;
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDto<Integer>> registerAgency(@Valid @RequestBody AgencyJoinDto joinDto) {
 
         agencyService.registerAgency(joinDto);
         return responseMsg(HttpStatus.OK, "Agency 등록완료", 1);
     }
 
-    @GetMapping("/{agencyId}")
+    @GetMapping(value = "/{agencyId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDto<AgencyDetailDto>> getAgencyDetail(@PathVariable Long agencyId) {
 
         Agency agency = agencyService.findAgencyById(agencyId);

@@ -2,7 +2,6 @@ package sports.trademarket.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,17 +40,20 @@ public class AgentServiceImpl implements AgentService {
     @Override
     @Transactional
     public void register(AgentJoinDto agentJoin, MultipartFile file) {
-        try {
-            encodingPassword(agentJoin);
 
-            Agent agent = Agent.toEntity(agentJoin);
-            belongingAgency(agentJoin.getAgencyId(), agent);
-            saveFileIfExist(file, agent);
-            agentRepository.save(agent);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicationException(duplicatedAgent);
-        }
+        checkDuplicatedAgent(agentJoin);
+        encodingPassword(agentJoin);
+        Agent agent = Agent.toEntity(agentJoin);
+        belongingAgency(agentJoin.getAgencyId(), agent);
+        saveFileIfExist(file, agent);
+        agentRepository.save(agent);
+    }
 
+    private void checkDuplicatedAgent(AgentJoinDto agentJoin) {
+        agentRepository.findByEmail(agentJoin.getEmail())
+                        .ifPresent(agent -> {
+                            throw new DuplicationException(duplicatedAgent);
+                        });
     }
 
     private void belongingAgency(Long agencyId, Agent agent) {
