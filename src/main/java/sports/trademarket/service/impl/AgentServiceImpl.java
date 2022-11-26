@@ -17,7 +17,6 @@ import sports.trademarket.exceptions.spring.NoSuchDataException;
 import sports.trademarket.exceptions.spring.SaveFileException;
 import sports.trademarket.repository.AgencyRepository;
 import sports.trademarket.repository.AgentRepository;
-import sports.trademarket.repository.FileRepository;
 import sports.trademarket.service.AgentService;
 
 import java.io.IOException;
@@ -34,7 +33,6 @@ public class AgentServiceImpl implements AgentService {
 
     private final AgencyRepository agencyRepository;
     private final AgentRepository agentRepository;
-    private final FileRepository fileRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${profile.img.path}")
@@ -86,11 +84,10 @@ public class AgentServiceImpl implements AgentService {
                     .build();
 
             save(imgSavePath, orgFileName, file);
-
-            return fileRepository.save(img);
+            return img;
 
         } catch (IOException e) {
-            throw new SaveFileException();
+            throw new SaveFileException(fileSaveFail);
         }
     }
 }

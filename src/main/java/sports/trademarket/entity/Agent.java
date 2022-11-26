@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
@@ -34,7 +35,7 @@ public class Agent extends CommonTimeEntity {
     @JoinColumn(name = "AGENCY_ID")
     private Agency agency;
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "PROFILE_IMG_ID")
     private ProfileImg profileImg;
 
