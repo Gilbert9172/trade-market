@@ -1,6 +1,7 @@
 package sports.trademarket.service.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,9 +10,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sports.trademarket.dto.AgencyJoinDto;
+import sports.trademarket.dto.AgentDetailDto;
 import sports.trademarket.dto.AgentJoinDto;
 import sports.trademarket.entity.Agency;
 import sports.trademarket.entity.Agent;
+import sports.trademarket.entity.ProfileImg;
 import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 import sports.trademarket.repository.AgencyRepository;
@@ -62,23 +66,47 @@ class AgentServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("Agent 상세조회")
+    void findAgentByID() throws Exception {
+        Agent agent = testAgentData();
+
+        //given
+        given(agentRepository.findById(1L)).willReturn(Optional.of(agent));
+
+        //when
+        Agent findAgent = agentService.findAgentById(1L);
+        AgentDetailDto agentDetailDto = AgentDetailDto.toDto(findAgent);
+
+        //then
+        assertThat(agentDetailDto.getAgentName()).isEqualTo(agent.getAgentName());
+        assertThat(agentDetailDto.getImgPath()).isEqualTo("savedPath/savedFileName");
+
+        //verify
+        verify(agentService).findAgentById(1L);
+    }
+
     @NotNull
     private AgentJoinDto testAgentDto() {
         return new AgentJoinDto(
                 1L, "gilbert", "gilbert@naver.com",
-                "1234","01012344321", 3
+                "1234567","01012344321", 3
         );
     }
 
     private Agency testAgencyData() {
-        Address address = new Address("seoul", "nowon", "lotteAPT");
         return Agency.builder()
                 .agencyName("참좋은 에이전씨")
                 .ceoName("gilbert")
                 .companyType(CompanyType.MID)
-                .address(address)
+                .address(testAddressData())
                 .homepageUrl("test@naver.com")
-                .career(10).build();
+                .career(10)
+                .active(1).build();
+    }
+
+    private Address testAddressData() {
+        return Address.of("seoul", "nowon", "lotteAPT");
     }
 
     private Agent testAgentData() {
@@ -86,9 +114,17 @@ class AgentServiceImplTest {
                 .agentName("gilbert")
                 .email("gilbert@naver.com")
                 .phone("01012344321")
+                .profileImg(testProfileData())
+                .agency(testAgencyData())
                 .career(3)
                 .password("hashedPassword")
+                .active(1)
                 .build();
+    }
+
+    private ProfileImg testProfileData() {
+        return new ProfileImg(1L, "orgName",".png",
+                "savedPath", "savedFileName");
     }
 
 }

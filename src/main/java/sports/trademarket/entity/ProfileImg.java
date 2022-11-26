@@ -30,4 +30,8 @@ public class ProfileImg {
     @Column(name = "SAVED_FILE_NM")
     private String savedFileNm;
 
+    public String getFullImgPath() {
+        return savedFilePath+"/"+savedFileNm;
+    }
+
 }

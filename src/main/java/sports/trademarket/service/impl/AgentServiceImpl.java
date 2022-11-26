@@ -49,6 +49,12 @@ public class AgentServiceImpl implements AgentService {
         agentRepository.save(agent);
     }
 
+    @Override
+    public Agent findAgentById(Long agentID) {
+        return agentRepository.findById(agentID)
+                .orElseThrow(() -> new NoSuchDataException(noSuchDataExist));
+    }
+
     private void checkDuplicatedAgent(AgentJoinDto agentJoin) {
         agentRepository.findByEmail(agentJoin.getEmail())
                         .ifPresent(agent -> {
