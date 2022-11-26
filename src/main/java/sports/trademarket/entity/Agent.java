@@ -1,7 +1,9 @@
 package sports.trademarket.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import sports.trademarket.dto.AgentJoinDto;
+import sports.trademarket.dto.UpdateAgentDto;
 import sports.trademarket.entity.commonEntity.CommonTimeEntity;
 import sports.trademarket.entity.enumType.RoleType;
 
@@ -14,9 +16,10 @@ import static sports.trademarket.entity.enumType.RoleType.*;
 
 @Entity
 @Getter @Builder
-@Table(name = "AGENT")
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
+@DynamicUpdate
+@Table(name = "AGENT")
 public class Agent extends CommonTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -72,6 +75,12 @@ public class Agent extends CommonTimeEntity {
 
     public static Agent toEntity(AgentJoinDto agentJoinDto) {
         return new Agent(agentJoinDto);
+    }
+
+    public void updateDetails(UpdateAgentDto updateDto, Agency newAgeny) {
+        agency = newAgeny;
+        phone = updateDto.getPhone();
+        career = updateDto.getCareer();
     }
 
 }

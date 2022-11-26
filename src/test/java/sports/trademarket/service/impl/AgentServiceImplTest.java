@@ -10,9 +10,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sports.trademarket.dto.AgencyJoinDto;
 import sports.trademarket.dto.AgentDetailDto;
 import sports.trademarket.dto.AgentJoinDto;
+import sports.trademarket.dto.UpdateAgentDto;
 import sports.trademarket.entity.Agency;
 import sports.trademarket.entity.Agent;
 import sports.trademarket.entity.ProfileImg;
@@ -86,7 +86,27 @@ class AgentServiceImplTest {
         verify(agentService).findAgentById(1L);
     }
 
-    @NotNull
+    @Test
+    @DisplayName("Agent 상세 수정")
+    void updateAgentDetails() throws Exception {
+
+        Agent agent = testAgentData();
+        Agency agency = testAgencyData2();
+        UpdateAgentDto updateDto = new UpdateAgentDto(2L, "01099998888",20);
+
+        //given
+        given(agencyRepository.findById(2L)).willReturn(Optional.of(agency));
+        given(agentRepository.findById(1L)).willReturn(Optional.of(agent));
+
+        //when
+        Agent afterUpdate = agentService.updateDetils(1L, updateDto);
+
+        //then
+        assertThat(afterUpdate.getAgency().getAgencyId()).isEqualTo(updateDto.getAgencyId());
+        assertThat(afterUpdate.getPhone()).isEqualTo(updateDto.getPhone());
+        assertThat(afterUpdate.getCareer()).isEqualTo(updateDto.getCareer());
+    }
+
     private AgentJoinDto testAgentDto() {
         return new AgentJoinDto(
                 1L, "gilbert", "gilbert@naver.com",
@@ -96,6 +116,7 @@ class AgentServiceImplTest {
 
     private Agency testAgencyData() {
         return Agency.builder()
+                .agencyId(1L)
                 .agencyName("참좋은 에이전씨")
                 .ceoName("gilbert")
                 .companyType(CompanyType.MID)
@@ -105,12 +126,25 @@ class AgentServiceImplTest {
                 .active(1).build();
     }
 
+    private Agency testAgencyData2() {
+        return Agency.builder()
+                .agencyId(2L)
+                .agencyName("참좋은 에이전씨2")
+                .ceoName("gilbert2")
+                .companyType(CompanyType.BIG)
+                .address(testAddressData())
+                .homepageUrl("test2@naver.com")
+                .career(20)
+                .active(1).build();
+    }
+
     private Address testAddressData() {
         return Address.of("seoul", "nowon", "lotteAPT");
     }
 
     private Agent testAgentData() {
         return Agent.builder()
+                .agentId(1L)
                 .agentName("gilbert")
                 .email("gilbert@naver.com")
                 .phone("01012344321")

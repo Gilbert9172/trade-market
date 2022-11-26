@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sports.trademarket.dto.AgentJoinDto;
+import sports.trademarket.dto.UpdateAgentDto;
 import sports.trademarket.entity.Agency;
 import sports.trademarket.entity.Agent;
 import sports.trademarket.entity.ProfileImg;
@@ -55,6 +56,21 @@ public class AgentServiceImpl implements AgentService {
                 .orElseThrow(() -> new NoSuchDataException(noSuchDataExist));
     }
 
+    @Override
+    @Transactional
+    public Agent updateDetils(Long agentId, UpdateAgentDto updateDto) {
+
+        Agent agent = this.findAgentById(agentId);
+        Agency agency = findAgencyById(updateDto.getAgencyId());
+        agent.updateDetails(updateDto,agency);
+        return agent;
+    }
+
+    private Agency findAgencyById(Long agencyId) {
+        return agencyRepository.findById(agencyId)
+                .orElseThrow(NoSuchDataException::new);
+    }
+
     private void checkDuplicatedAgent(AgentJoinDto agentJoin) {
         agentRepository.findByEmail(agentJoin.getEmail())
                         .ifPresent(agent -> {
@@ -63,9 +79,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     private void belongingAgency(Long agencyId, Agent agent) {
-        Agency agency = agencyRepository.findById(agencyId)
-                .orElseThrow(NoSuchDataException::new);
-        agent.setAgency(agency);
+        agent.setAgency(findAgencyById(agencyId));
     }
 
     private void saveFileIfExist(MultipartFile file, Agent agent) {
