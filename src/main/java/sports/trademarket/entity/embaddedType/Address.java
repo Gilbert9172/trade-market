@@ -1,6 +1,5 @@
 package sports.trademarket.entity.embaddedType;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,6 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Embeddable
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 public class Address {
 
@@ -26,5 +24,15 @@ public class Address {
 
     public String fullAddress() {
         return city + " " + mainAddress + " " + subAddress;
+    }
+
+    private Address(String city, String mainAddress, String subAddress) {
+        this.city = city;
+        this.mainAddress = mainAddress;
+        this.subAddress = subAddress;
+    }
+
+    public static Address of(String city, String mainAddress, String subAddress) {
+        return new Address(city, mainAddress, subAddress);
     }
 }

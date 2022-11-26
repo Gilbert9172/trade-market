@@ -1,13 +1,12 @@
 package sports.trademarket.entity;
 
 import lombok.*;
+import sports.trademarket.dto.AgencyJoinDto;
 import sports.trademarket.entity.commonEntity.CommonTimeEntity;
 import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
@@ -23,15 +22,12 @@ public class Agency extends CommonTimeEntity {
     @Column(name = "AGENCY_ID")
     public Long agencyId;
 
-    @NotEmpty
     @Column(name = "AGENCY_NAME")
     public String agencyName;
 
-    @NotEmpty
     @Column(name = "CEO_NAME")
     public String ceoName;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "COMPANY_TYPE")
     public CompanyType companyType;
@@ -39,7 +35,6 @@ public class Agency extends CommonTimeEntity {
     @Column(name = "CAREER")
     public int career;
 
-    @NotNull
     @Embedded
     public Address address;
 
@@ -47,12 +42,27 @@ public class Agency extends CommonTimeEntity {
     public String homepageUrl;
 
     @Column(name = "ACTIVE")
-    @Builder.Default
-    private int active = 1;
+    private int active;
 
-    //    @OneToMany(mappedBy = "agency")
+//    @OneToMany(mappedBy = "agency")
 //    private List<Agent> agents = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "agent")
 //    private List<Player> players = new ArrayList<>();
+
+    private Agency (AgencyJoinDto joinDto) {
+        agencyName = joinDto.getAgencyName();
+        ceoName = joinDto.getCeoName();
+        companyType = joinDto.getCompanyType();
+        career = joinDto.getCareer();
+        address = Address.of(joinDto.getCity(),
+                joinDto.getMainAddress(), joinDto.getSubAddress());
+        homepageUrl = joinDto.getHomepageUrl();
+        active = 1;
+    }
+
+    public static Agency toEntity(AgencyJoinDto joinDto) {
+        return new Agency(joinDto);
+    }
+
 }

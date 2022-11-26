@@ -26,7 +26,7 @@ class AgencyRepositoryTest {
     @DisplayName("Agency 등록")
     void registerAgencyTest() throws Exception {
         //given
-        Address address = new Address("Seoul", "nowon", "lotter");
+        Address address = Address.of("Seoul", "nowon", "lotter");
 
         Agency agency = Agency.builder()
                 .ceoName("Gilbert")
