@@ -1,5 +1,6 @@
 package sports.trademarket.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,12 +22,15 @@ import java.util.Arrays;
 
 import static sports.trademarket.dto.enumType.AuthConstants.*;
 
+@Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) throws ServletException {
 
-        String[] EXCLUDE_URL = {"/v1/agent/join", "/v1/agency", "/v1/email"};
+        String[] EXCLUDE_URL = {"/swagger-ui", "/swagger-resources", "/v2/api-docs",
+                                "/v1/agent/join", "/v1/agency", "/v1/email"};
+        log.info("경로 = {}", request.getServletPath());
         return Arrays.stream(EXCLUDE_URL).anyMatch(url -> request.getServletPath().startsWith(url));
     }
 
