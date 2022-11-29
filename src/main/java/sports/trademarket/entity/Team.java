@@ -1,5 +1,6 @@
 package sports.trademarket.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sports.trademarket.entity.commonEntity.CommonTimeEntity;
@@ -12,6 +13,8 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@AllArgsConstructor
+@Table(name = "TEAM")
 public class Team extends CommonTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -21,8 +24,8 @@ public class Team extends CommonTimeEntity {
     @Column(name = "TEAM_NAME")
     private String teamName;
 
-    @Column(name = "HISTORY")
-    private String history;
+    @Column(name = "CAREER")
+    private int career;
 
     @Column(name = "HOME_CITY")
     private String homeCity;
