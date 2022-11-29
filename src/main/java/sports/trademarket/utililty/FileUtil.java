@@ -9,11 +9,11 @@ import java.util.Date;
 
 public class FileUtil {
 
-    public static void save(String folderName, String fileName, MultipartFile file) throws IOException {
+    public static void save(String savePath, String fileName, MultipartFile file) throws IOException {
 
-        makeFolder(folderName);
+        makeFolder(savePath);
 
-        File fullFile = new File(folderName + File.separator + fileName);
+        File fullFile = new File(savePath + File.separator + fileName);
         file.transferTo(fullFile);
     }
 

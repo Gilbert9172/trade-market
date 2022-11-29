@@ -2,6 +2,7 @@ package sports.trademarket.entity;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.web.multipart.MultipartFile;
 import sports.trademarket.dto.AgentJoinDto;
 import sports.trademarket.dto.UpdateAgentDto;
 import sports.trademarket.entity.commonEntity.CommonTimeEntity;
@@ -56,14 +57,6 @@ public class Agent extends CommonTimeEntity {
     @Column(name = "ACTIVE")
     private int active;
 
-    public void setAgency(Agency agency) {
-        this.agency = agency;
-    }
-
-    public void setProfileImg(ProfileImg profileImg) {
-        this.profileImg = profileImg;
-    }
-
     private Agent(AgentJoinDto agentJoinDto) {
         agentName = agentJoinDto.getAgentName();
         email = agentJoinDto.getEmail();
@@ -81,6 +74,16 @@ public class Agent extends CommonTimeEntity {
         agency = newAgeny;
         phone = updateDto.getPhone();
         career = updateDto.getCareer();
+    }
+
+    public void belongingAgency(Agency agency) {
+        this.agency = agency;
+    }
+
+    public void saveImgIfExist(MultipartFile file, String savePath) {
+        if (file != null) {
+            this.profileImg = ProfileImg.saveProfileImg(file, savePath);
+        }
     }
 
 }
