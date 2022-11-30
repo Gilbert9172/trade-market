@@ -14,5 +14,6 @@ public class ErrorConstants {
     public static final String failedVerifyEmail    = "이메일 인증실패";
     public static final String duplicatedAgent      = "이미 등록한 에이전트입니다.";
     public static final String duplicatedAgency     = "이미 등록한 에이전시입니다.";
+    public static final String duplicatedPlayer     = "피파 등록 번호를 확인해주세요.";
 
 }
