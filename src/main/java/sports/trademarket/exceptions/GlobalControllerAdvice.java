@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import sports.trademarket.controller.CommonController;
 import sports.trademarket.dto.ResponseDto;
 import sports.trademarket.exceptions.spring.*;
 
@@ -17,7 +18,7 @@ import static org.springframework.http.HttpStatus.*;
 import static sports.trademarket.exceptions.spring.ErrorConstants.*;
 
 @RestControllerAdvice
-public class GlobalControllerAdvice {
+public class GlobalControllerAdvice extends CommonController {
 
     @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class, IllegalArgumentException.class})
     public ResponseEntity<ResponseDto<Integer>> ValidationException(Exception e) {
@@ -62,9 +63,13 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(responseDto, responseHeader(), BAD_REQUEST);
     }
 
+    @ExceptionHandler({BeforeReOfferTermException.class})
+    public ResponseEntity<ResponseDto<Integer>> BeforeReOFferTermException(Exception e) {
+        return responseMsg(BAD_REQUEST, e.getMessage(), fail);
+    }
 
     private HttpHeaders responseHeader() {
-        HttpHeaders headers= new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         return headers;
     }

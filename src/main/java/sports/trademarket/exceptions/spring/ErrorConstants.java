@@ -15,5 +15,6 @@ public class ErrorConstants {
     public static final String duplicatedAgent      = "이미 등록한 에이전트입니다.";
     public static final String duplicatedAgency     = "이미 등록한 에이전시입니다.";
     public static final String duplicatedPlayer     = "피파 등록 번호를 확인해주세요.";
+    public static final String beforeThreeDays      = "최초 제안 후 3일 후에 다시 제안할 수 있습니다. 최초 제안 후 경과일 = " + "일";
 
 }

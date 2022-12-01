@@ -52,8 +52,9 @@ public class Player extends CommonTimeEntity {
     @Column(name = "ACTIVE")
     private int active;
 
-    public Player(Agent agent, Team team, Position position,
+    public Player(Long playerId, Agent agent, Team team, Position position,
                   String name, int age) {
+        this.playerId = playerId;
         this.agent = agent;
         this.team = team;
         this.position = position;

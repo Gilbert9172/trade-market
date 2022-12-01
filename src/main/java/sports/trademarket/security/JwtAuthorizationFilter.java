@@ -29,7 +29,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) throws ServletException {
 
         String[] EXCLUDE_URL = {"/swagger-ui", "/swagger-resources", "/v2/api-docs",
-                                "/v1/agent", "/v1/agency", "/v1/email", "/v1/player"};
+                                "/v1/agent/login","/v1/agent/join",
+                                "/v1/agency", "/v1/email", "/v1/player"};
         log.info("경로 = {}", request.getServletPath());
         return Arrays.stream(EXCLUDE_URL).anyMatch(url -> request.getServletPath().startsWith(url));
     }
@@ -42,7 +43,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String accessToken = extractTokenFromRequestHeader(request, AUTH_HEADER.getName());
             String refreshToken = extractTokenFromRequestHeader(request, RE_AUTH_HEADER.getName());
 
-            if (JwtUtil.isValidRefreshToken(accessToken)) {
+            if (JwtUtil.isValidToken(accessToken)) {
                 checkAuthorization(accessToken);
                 filterChain.doFilter(request, response);
             } else if (JwtUtil.isValidRefreshToken(refreshToken)) {

@@ -40,4 +40,8 @@ public class Position {
         this.positionName = positionName;
         this.parent = parent;
     }
+
+//    public static of(Long positionId, String positionName, Position parent) {
+//        return new Position(positionId,positionName,parent)
+//    }
 }

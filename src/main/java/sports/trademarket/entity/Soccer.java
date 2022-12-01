@@ -35,11 +35,11 @@ public class Soccer extends Player {
     private ContractCondition contractCondition;
 
     @Builder
-    private Soccer(Agent agent, Team team, Position position,
+    public Soccer(Long playerId, Agent agent, Team team, Position position,
                    String name, int age, String fifaRegNum,
                   String preferFoot, SkillLevel skillLevel, SoccerPlayerStats playerStats,
                   ContractCondition contractCondition) {
-        super(agent, team, position, name, age);
+        super(playerId, agent, team, position, name, age);
         this.fifaRegNum = fifaRegNum;
         this.preferFoot = preferFoot;
         this.skillLevel = skillLevel;

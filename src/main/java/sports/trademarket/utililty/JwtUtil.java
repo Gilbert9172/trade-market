@@ -5,7 +5,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import sports.trademarket.entity.Agent;
-import sports.trademarket.entity.enumType.RoleType;
 import sports.trademarket.security.config.KeyConfig;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -15,6 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static sports.trademarket.dto.enumType.AuthConstants.AUTH_HEADER;
+import static sports.trademarket.utililty.ServletReqUtil.getServletRequest;
 
 public class JwtUtil {
 
@@ -110,6 +112,12 @@ public class JwtUtil {
 
     // Get User Id From claims
     public static Long getIdFromToken(String token) {
-        return (Long) getAllClaimsFromToken(token).get("agentId");
+        return getAllClaimsFromToken(token).get("agentId", Long.class);
+    }
+
+    public static Long agentId() {
+        String bearToken = getServletRequest().getHeader(AUTH_HEADER.getName());
+        String token = getTokenFromBearer(bearToken);
+        return getIdFromToken(token);
     }
 }
