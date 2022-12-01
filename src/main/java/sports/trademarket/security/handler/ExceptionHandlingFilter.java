@@ -3,6 +3,7 @@ package sports.trademarket.security.handler;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sports.trademarket.exceptions.security.EmptyTokenException;
+import sports.trademarket.exceptions.security.ExpiredAccessTokenException;
 import sports.trademarket.exceptions.security.NotValidTokenException;
 
 import javax.servlet.FilterChain;
@@ -28,8 +29,9 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
             eachResponseOptions(response, response.SC_UNAUTHORIZED, emptyToken());
         } catch (NotValidTokenException e) {
             eachResponseOptions(response, response.SC_UNAUTHORIZED, loginAgain());
+        } catch (ExpiredAccessTokenException e) {
+            eachResponseOptions(response, response.SC_OK, newAccessToken(e.getMessage()));
         }
-
     }
 
     public void eachResponseOptions(HttpServletResponse response, int status, String msg) throws IOException {

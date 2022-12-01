@@ -1,7 +1,6 @@
 package sports.trademarket.utililty;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import sports.trademarket.entity.Agent;
@@ -77,22 +76,17 @@ public class JwtUtil {
         return header.split(" ")[1];
     }
 
-    public static boolean isValidToken(String token) {
-        return checkClaims(token);
+    public static void isValidToken(String token) {
+        checkClaims(token);
     }
 
     // Refresh-Token Validation
-    public static boolean isValidRefreshToken(String token) {
-        return checkClaims(token);
+    public static void isValidRefreshToken(String token) {
+        checkClaims(token);
     }
 
-    private static boolean checkClaims(String token) {
-        try {
-            getAllClaimsFromToken(token);
-            return true;
-        } catch (JwtException | NullPointerException e) {
-            return false;
-        }
+    private static void checkClaims(String token) {
+        getAllClaimsFromToken(token);
     }
 
     private static Claims getAllClaimsFromToken(String token) {

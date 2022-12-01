@@ -1,5 +1,6 @@
 package sports.trademarket.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,8 +11,8 @@ import sports.trademarket.dto.CustomUserDetails;
 import sports.trademarket.entity.Agent;
 import sports.trademarket.entity.enumType.RoleType;
 import sports.trademarket.exceptions.security.EmptyTokenException;
+import sports.trademarket.exceptions.security.ExpiredAccessTokenException;
 import sports.trademarket.exceptions.security.NotValidTokenException;
-import sports.trademarket.utililty.JwtUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static sports.trademarket.dto.enumType.AuthConstants.*;
+import static sports.trademarket.utililty.JwtUtil.*;
 
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -41,37 +43,36 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String accessToken = extractTokenFromRequestHeader(request, AUTH_HEADER.getName());
-            String refreshToken = extractTokenFromRequestHeader(request, RE_AUTH_HEADER.getName());
+            isValidToken(accessToken);
+            checkAuthorization(accessToken);
+            filterChain.doFilter(request, response);
 
-            if (JwtUtil.isValidToken(accessToken)) {
-                checkAuthorization(accessToken);
-                filterChain.doFilter(request, response);
-            } else if (JwtUtil.isValidRefreshToken(refreshToken)) {
-
-                Agent userCredential = newAccessTokenMadeByRefreshToken(refreshToken);
-                String newAccessToken = JwtUtil.generate(userCredential);
-                settingResponseHeader(response, newAccessToken, refreshToken);
-                checkAuthorization(newAccessToken);
-                filterChain.doFilter(request, response);
-            } else {
-                throw new NotValidTokenException();
-            }
         } catch (NullPointerException e) {
             throw new EmptyTokenException();
+        } catch (ExpiredJwtException e) {
+            try {
+                String refreshToken = extractTokenFromRequestHeader(request, RE_AUTH_HEADER.getName());
+                isValidRefreshToken(refreshToken);
+                Agent userCredential = newAccessTokenMadeByRefreshToken(refreshToken);
+                String newAccessToken = generate(userCredential);
+                throw new ExpiredAccessTokenException(TOKEN_TYPE.getName() + " " + newAccessToken);
+            } catch (ExpiredJwtException ex) {
+                throw new NotValidTokenException();
+            }
         }
     }
 
     private static String extractTokenFromRequestHeader(HttpServletRequest request, String header) {
         String bearerToken = request.getHeader(header);
-        return JwtUtil.getTokenFromBearer(bearerToken);
+        return getTokenFromBearer(bearerToken);
     }
 
     private static Agent newAccessTokenMadeByRefreshToken(String refreshToken) {
-        String roleFromToken = JwtUtil.getTypeFromToken(refreshToken);
+        String roleFromToken = getTypeFromToken(refreshToken);
         return  Agent.builder()
-                .agentId(JwtUtil.getIdFromToken(refreshToken))
+                .agentId(getIdFromToken(refreshToken))
                 .roleType(checkRoleType(roleFromToken))
-                .email(JwtUtil.getEmailFromToken(refreshToken))
+                .email(getEmailFromToken(refreshToken))
                 .build();
     }
 
@@ -82,7 +83,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     public void checkAuthorization(String token) {
-        String roleFromToken = JwtUtil.getTypeFromToken(token);
+        String roleFromToken = getTypeFromToken(token);
         CustomUserDetails userDetail = new CustomUserDetails(Agent.builder()
                 .roleType(checkRoleType(roleFromToken)).build());
 
