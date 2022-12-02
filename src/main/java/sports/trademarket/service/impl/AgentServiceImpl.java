@@ -108,7 +108,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     private void checkDuplicatedAgent(AgentJoinDto agentJoin) {
-        agentRepository.findByEmail(agentJoin.getEmail())
+        agentRepository.findByEmailOrPhone(agentJoin.getEmail(), agentJoin.getPhone())
                         .ifPresent(agent -> {
                             throw new DuplicationException(duplicatedAgent);
                         });
