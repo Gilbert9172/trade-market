@@ -13,9 +13,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import sports.trademarket.dto.PlayerRegisterDto;
 import sports.trademarket.entity.*;
 import sports.trademarket.entity.embaddedType.Address;
-import sports.trademarket.entity.embaddedType.ContractCondition;
-import sports.trademarket.entity.embaddedType.SoccerPlayerStats;
-import sports.trademarket.entity.enumType.CompanyType;
 import sports.trademarket.exceptions.spring.DuplicationException;
 import sports.trademarket.repository.*;
 
