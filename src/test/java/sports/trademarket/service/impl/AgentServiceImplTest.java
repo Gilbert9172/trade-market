@@ -1,8 +1,6 @@
 package sports.trademarket.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,10 +12,8 @@ import sports.trademarket.entity.*;
 import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 import sports.trademarket.exceptions.spring.BeforeReOfferTermException;
-import sports.trademarket.repository.AgencyRepository;
-import sports.trademarket.repository.AgentRepository;
-import sports.trademarket.repository.OfferRepository;
-import sports.trademarket.repository.PlayerRepository;
+import sports.trademarket.repository.*;
+import sports.trademarket.utililty.JwtUtil;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +31,9 @@ import static sports.trademarket.entity.enumType.CurrencyUnit.*;
 class AgentServiceImplTest {
 
     @Mock
+    private TermChecker termChecker;
+
+    @Mock
     private AgencyRepository agencyRepository;
 
     @Mock
@@ -49,9 +48,24 @@ class AgentServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private ContractRepository contractRepository;
+
     @Spy
     @InjectMocks
     private AgentServiceImpl agentService;
+
+    private static MockedStatic<JwtUtil> jwtUtil;
+
+    @BeforeAll
+    public static void mockJwtUtil() {
+        jwtUtil = mockStatic(JwtUtil.class);
+    }
+
+    @AfterAll
+    public static void mockJwtUtilEnd() {
+        jwtUtil.close();
+    }
 
     private AgentJoinDto agentJoinDto;
     private Agency agency1;
@@ -119,6 +133,8 @@ class AgentServiceImplTest {
 
         player = new Player(1L, agent, team, position, "메시", 34);
     }
+
+
 
     @Test
     @DisplayName("Agent 등록")
@@ -189,6 +205,7 @@ class AgentServiceImplTest {
         Long playerId = 1L;
 
         //given
+        given(JwtUtil.agentId()).willReturn(1L);
         given(agentRepository.findById(any())).willReturn(ofNullable(agent));
         given(playerRepository.findById(any())).willReturn(ofNullable(player));
         given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(empty());
@@ -219,32 +236,26 @@ class AgentServiceImplTest {
                 .contract(contractCond).contractStatus(NEGOTIATING)
                 .build();
 
-        Offer secOffer = Offer.builder()
-                .offerId(1L).agent(agent).player(player)
-                .contract(contractCond).contractStatus(NEGOTIATING)
-                .build();
-
-        LocalDateTime firstOfferDt =
+        LocalDateTime offerDt =
                 LocalDateTime.of(2022, 11, 28,
                         2, 13, 10, 697);
 
-        Long playerId = 1L;
+        Offer offer = new Offer(offerDt, offerDt, firstOffer);
 
 
         //given
-        Offer mockedOffer = mock(Offer.class);
-        given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(Optional.ofNullable(firstOffer));
-
+        given(JwtUtil.agentId()).willReturn(1L);
+        given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(Optional.of(offer));
+        given(termChecker.getTerm(any(), any())).willReturn(4);
+        willDoNothing().given(contractRepository).deleteById(anyLong());
         //when
-        agentService.offerTransfer(playerId, contractCond);
+        Offer afterModify = agentService.offerTransfer(1L, newCond);
 
         //then
-//        assertThat(offer.getOfferId()).isEqualTo(offer.getOfferId());
-//        assertThat(offer.getContract().getContractId()).isEqualTo(newCond.getContractId());
-//        assertThat(offer.getContract().getPayment()).isEqualTo(newCond.getPayment());
-//        assertThat(offer.getContract().getTransferFee()).isEqualTo(newCond.getTransferFee());
-//        assertThat(offer.getContract().getContractYear()).isEqualTo(newCond.getContractYear());
-        verify(mockedOffer).updateOffer(offerContract.capture());
+        assertThat(offer.getOfferId()).isEqualTo(afterModify.getOfferId());
+        assertThat(afterModify.getContract().getPayment()).isEqualTo(newCond.getPayment());
+        assertThat(afterModify.getContract().getTransferFee()).isEqualTo(newCond.getTransferFee());
+        assertThat(afterModify.getContract().getContractYear()).isEqualTo(newCond.getContractYear());
 
     }
 

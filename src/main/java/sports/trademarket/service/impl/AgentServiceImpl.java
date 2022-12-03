@@ -12,18 +12,12 @@ import sports.trademarket.entity.*;
 import sports.trademarket.exceptions.spring.BeforeReOfferTermException;
 import sports.trademarket.exceptions.spring.DuplicationException;
 import sports.trademarket.exceptions.spring.NoSuchDataException;
-import sports.trademarket.repository.AgencyRepository;
-import sports.trademarket.repository.AgentRepository;
-import sports.trademarket.repository.OfferRepository;
-import sports.trademarket.repository.PlayerRepository;
+import sports.trademarket.repository.*;
 import sports.trademarket.service.AgentService;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.*;
-import static sports.trademarket.entity.enumType.ContractStatus.*;
 import static sports.trademarket.exceptions.spring.ErrorConstants.*;
 import static sports.trademarket.utililty.JwtUtil.agentId;
 
@@ -36,7 +30,9 @@ public class AgentServiceImpl implements AgentService {
     private final AgentRepository agentRepository;
     private final PlayerRepository playerRepository;
     private final OfferRepository offerRepository;
+    private final ContractRepository contractRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TermChecker termChecker;
 
     @Value("${img.path.agent}")
     private String savePath;
@@ -77,25 +73,27 @@ public class AgentServiceImpl implements AgentService {
 
         Optional<Offer> optionalOffer = offerRepository.findPreviousOffer(offerAgentId, playerId);
         if (optionalOffer.isEmpty()) {
-            Agent agent = findAgentById(offerAgentId);
-            Player player = playerRepository.findById(playerId)
-                    .orElseThrow(NoSuchDataException::new);
-            Offer offer = Offer.createOffer(agent, player, contract);
+            Agent offerAgent = findAgentById(offerAgentId);
+            Player player = findPlayerById(playerId);
+            Offer offer = Offer.createOffer(offerAgent, player, contract);
             return offerRepository.save(offer);
         } else {
             Offer previousOffer = optionalOffer.get();
-            int elapsedDays = getTerm(previousOffer.getModifiedDt(), now());
-            if (moreThenThreeDays(elapsedDays)) {
+            Long prevcontractId = previousOffer.getContract().getContractId();
+            int term = termChecker.getTerm(previousOffer.getModifiedDt(), now());
+            if (moreThenThreeDays(term)) {
                 previousOffer.updateOffer(contract);
+                contractRepository.deleteById(prevcontractId);
                 return previousOffer;
             } else {
-                throw new BeforeReOfferTermException(beforeThreeDays + elapsedDays);
+                throw new BeforeReOfferTermException(beforeThreeDays + term);
             }
         }
     }
 
-    public int getTerm(LocalDateTime modifiedDt, LocalDateTime currentDt) {
-        return (int) Math.round((ChronoUnit.SECONDS.between(modifiedDt, currentDt)/ 86400.0) * 100) / 100;
+    private Player findPlayerById(Long playerId) {
+        return playerRepository.findById(playerId)
+                .orElseThrow(NoSuchDataException::new);
     }
 
     public boolean moreThenThreeDays(int elapsedDays) {

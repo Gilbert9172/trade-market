@@ -9,6 +9,8 @@ import sports.trademarket.entity.enumType.ContractStatus;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
@@ -41,6 +43,15 @@ public class Offer extends CommonTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "CONTRACT_STATUS")
     private ContractStatus contractStatus;
+
+    public Offer(LocalDateTime createdDt, LocalDateTime modifiedDt, Offer offer) {
+        super(createdDt, modifiedDt);
+        this.offerId = offer.getOfferId();
+        this.agent = offer.getAgent();
+        this.player = offer.getPlayer();
+        this.contract = offer.getContract();
+        this.contractStatus = offer.getContractStatus();
+    }
 
     public void updateOffer(Contract newCond) {
         this.contract = newCond;
