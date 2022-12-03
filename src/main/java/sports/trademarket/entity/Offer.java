@@ -36,7 +36,7 @@ public class Offer extends CommonTimeEntity {
     @JoinColumn(name = "PLAYER_ID")
     private Player player;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY, cascade = PERSIST)
     @JoinColumn(name = "CONTRACT_ID")
     private Contract contract;
 
