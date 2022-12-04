@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sports.trademarket.dto.AgentDetailDto;
 import sports.trademarket.dto.AgentJoinDto;
@@ -17,6 +18,8 @@ import sports.trademarket.utililty.JwtUtil;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.*;
@@ -55,8 +58,6 @@ class AgentServiceImplTest {
     @InjectMocks
     private AgentServiceImpl agentService;
 
-    private static MockedStatic<JwtUtil> jwtUtil;
-
     @BeforeAll
     public static void mockJwtUtil() {
         jwtUtil = mockStatic(JwtUtil.class);
@@ -67,15 +68,15 @@ class AgentServiceImplTest {
         jwtUtil.close();
     }
 
+    private static MockedStatic<JwtUtil> jwtUtil;
+
     private AgentJoinDto agentJoinDto;
     private Agency agency1;
     private Agency agency2;
     private Agent agent;
     private UpdateAgentDto updateDto;
-    private Player player;
-
-    @Captor
-    ArgumentCaptor<Contract> offerContract;
+    private Team team;
+    private Position position;
 
     @BeforeEach
     void setTestData() {
@@ -124,17 +125,13 @@ class AgentServiceImplTest {
                 .active(1)
                 .build();
 
-        Team team = new Team(1L, "TeamA",
+        team = new Team(1L, "TeamA",
                 5, "London", "ownerA",
                 "coach-A", "coachA@naver.com", 1);
 
-        Position position = new Position(2L, "SS",
+        position = new Position(2L, "SS",
                 new Position(1L, "FW", null));
-
-        player = new Player(1L, agent, team, position, "메시", 34);
     }
-
-
 
     @Test
     @DisplayName("Agent 등록")
@@ -192,6 +189,8 @@ class AgentServiceImplTest {
     @Test
     @DisplayName("최초 이적 제안하기")
     void offerTransfer() throws Exception {
+        Player player = new Player(1L, agent, team, position, "메시", 34);
+
         Contract contractCond = Contract.builder()
                 .contractId(1L).payment(1000L).transferFee(2000L)
                 .contractDivision(LOAN).contractYear(1).contractMonth(6)
@@ -207,12 +206,12 @@ class AgentServiceImplTest {
         //given
         given(JwtUtil.agentId()).willReturn(1L);
         given(agentRepository.findById(any())).willReturn(ofNullable(agent));
-        given(playerRepository.findById(any())).willReturn(ofNullable(player));
+        given(playerRepository.findById(any())).willReturn(of(player));
         given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(empty());
         given(offerRepository.save(any())).willReturn(offer);
 
         //when
-        Offer offerTransfer = agentService.offerTransfer(playerId, contractCond);
+        Offer offerTransfer = agentService.offerTransfer(1L, playerId, contractCond);
 
         //then
         assertThat(offer.getPlayer().getName()).isEqualTo(offerTransfer.getPlayer().getName());
@@ -221,6 +220,8 @@ class AgentServiceImplTest {
     @Test
     @DisplayName("이미 제안을 한 경우 - 기존 제안 수정")
     void alreadyOfferd() throws Exception {
+        Player player = new Player(1L, agent, team, position, "메시", 34);
+
         Contract contractCond = Contract.builder()
                 .contractId(1L).payment(1000L).transferFee(2000L)
                 .contractDivision(LOAN).contractYear(1).contractMonth(6)
@@ -242,14 +243,13 @@ class AgentServiceImplTest {
 
         Offer offer = new Offer(offerDt, offerDt, firstOffer);
 
-
         //given
         given(JwtUtil.agentId()).willReturn(1L);
         given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(Optional.of(offer));
         given(termChecker.getTerm(any(), any())).willReturn(4);
         willDoNothing().given(contractRepository).deleteById(anyLong());
         //when
-        Offer afterModify = agentService.offerTransfer(1L, newCond);
+        Offer afterModify = agentService.offerTransfer(1L, 1L, newCond);
 
         //then
         assertThat(offer.getOfferId()).isEqualTo(afterModify.getOfferId());
@@ -302,6 +302,32 @@ class AgentServiceImplTest {
 
         //then
         assertThat(elapsedDays).isGreaterThanOrEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("같은 에이전트에게 의뢰한 선수 목록")
+    void playersBelongingToSameAgent() throws Exception {
+        //given
+        List<Player> players = new ArrayList<>();
+        for (long i = 0; i < 10L; i++) {
+            players.add(Soccer.builder().playerId(i).agent(agent).build());
+        }
+
+        PageRequest pageRequest =
+                PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "playerId"));
+
+        Page<Player> paingPlayers = new PageImpl<>(players, pageRequest, 10);
+
+        given(playerRepository.findClientByAgentId(anyLong(), any(Pageable.class))).willReturn(paingPlayers);
+
+        //when
+        Page<Player> playerList = agentService.getClienetByAgentId(1L, pageRequest);
+
+        //then
+        assertThat(players.size()).isEqualTo(playerList.getTotalElements());
+        assertThat(playerList.hasNext()).isTrue();
+        assertThat(playerList.getNumber()).isEqualTo(0);
+        System.out.println(playerList.getSort());
     }
 
 

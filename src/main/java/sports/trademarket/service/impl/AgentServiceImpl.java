@@ -2,6 +2,8 @@ package sports.trademarket.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,6 @@ import java.util.Optional;
 
 import static java.time.LocalDateTime.*;
 import static sports.trademarket.exceptions.spring.ErrorConstants.*;
-import static sports.trademarket.utililty.JwtUtil.agentId;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,13 +68,11 @@ public class AgentServiceImpl implements AgentService {
 
     @Override
     @Transactional
-    public Offer offerTransfer(Long playerId ,Contract contract) throws BeforeReOfferTermException {
+    public Offer offerTransfer(Long agnetId, Long playerId ,Contract contract) throws BeforeReOfferTermException {
 
-        Long offerAgentId = agentId();
-
-        Optional<Offer> optionalOffer = offerRepository.findPreviousOffer(offerAgentId, playerId);
+        Optional<Offer> optionalOffer = offerRepository.findPreviousOffer(agnetId, playerId);
         if (optionalOffer.isEmpty()) {
-            Agent offerAgent = findAgentById(offerAgentId);
+            Agent offerAgent = findAgentById(agnetId);
             Player player = findPlayerById(playerId);
             Offer offer = Offer.createOffer(offerAgent, player, contract);
             return offerRepository.save(offer);
@@ -89,6 +88,11 @@ public class AgentServiceImpl implements AgentService {
                 throw new BeforeReOfferTermException(beforeThreeDays + term);
             }
         }
+    }
+
+    @Override
+    public Page<Player> getClienetByAgentId(Long agentId, Pageable pageable) {
+        return playerRepository.findClientByAgentId(agentId, pageable);
     }
 
     private Player findPlayerById(Long playerId) {

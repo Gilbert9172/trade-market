@@ -1,6 +1,9 @@
 package sports.trademarket.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,12 +11,15 @@ import sports.trademarket.dto.*;
 import sports.trademarket.entity.Agent;
 import sports.trademarket.entity.Contract;
 import sports.trademarket.entity.Offer;
+import sports.trademarket.entity.Player;
 import sports.trademarket.service.AgentService;
 
 import javax.validation.Valid;
 
+import static org.springframework.data.domain.Sort.Direction.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
+import static sports.trademarket.utililty.JwtUtil.agentId;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,8 +59,15 @@ public class AgentController extends CommonController {
             @PathVariable Long playerId,
             @RequestBody Contract contract) {
 
-        Offer offer = agentService.offerTransfer(playerId, contract);
+        Offer offer = agentService.offerTransfer(agentId(), playerId, contract);
         return responseMsg(OK, "Offer 제안하기 API", OfferDto.toDto(offer));
+    }
+
+    @GetMapping("/clients")
+    public ResponseEntity<ResponseDto<Page<ClientDto>>> belongingPlayers(
+            @PageableDefault(size=5, sort = "playerId", direction = ASC) Pageable pageable) {
+        Page<Player> players = agentService.getClienetByAgentId(agentId(), pageable);
+        return responseMsg(OK, "의뢰한 선수 목록API", players.map(ClientDto::of));
     }
 
 }
