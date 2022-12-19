@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sports.trademarket.dto.AgentJoinDto;
+import sports.trademarket.dto.ContractEmailDto;
 import sports.trademarket.dto.UpdateAgentDto;
 import sports.trademarket.entity.*;
 import sports.trademarket.exceptions.spring.BeforeReOfferTermException;
@@ -16,10 +17,12 @@ import sports.trademarket.exceptions.spring.DuplicationException;
 import sports.trademarket.exceptions.spring.NoSuchDataException;
 import sports.trademarket.repository.*;
 import sports.trademarket.service.AgentService;
+import sports.trademarket.service.MailService;
 
 import java.util.Optional;
 
 import static java.time.LocalDateTime.*;
+import static sports.trademarket.dto.ContractEmailDto.*;
 import static sports.trademarket.exceptions.spring.ErrorConstants.*;
 
 @Service
@@ -32,6 +35,7 @@ public class AgentServiceImpl implements AgentService {
     private final PlayerRepository playerRepository;
     private final OfferRepository offerRepository;
     private final ContractRepository contractRepository;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
     private final TermChecker termChecker;
 
@@ -70,24 +74,40 @@ public class AgentServiceImpl implements AgentService {
     @Transactional
     public Offer offerTransfer(Long agnetId, Long playerId ,Contract contract) throws BeforeReOfferTermException {
 
+        Agent offerAgent = findAgentById(agnetId);
+        Player player = findPlayerById(playerId);
+        Offer offer;
         Optional<Offer> optionalOffer = offerRepository.findPreviousOffer(agnetId, playerId);
+
         if (optionalOffer.isEmpty()) {
-            Agent offerAgent = findAgentById(agnetId);
-            Player player = findPlayerById(playerId);
-            Offer offer = Offer.createOffer(offerAgent, player, contract);
-            return offerRepository.save(offer);
+            offer = Offer.createOffer(offerAgent, player, contract);
+            offerRepository.save(offer);
         } else {
-            Offer previousOffer = optionalOffer.get();
-            Long prevcontractId = previousOffer.getContract().getContractId();
-            int term = termChecker.getTerm(previousOffer.getModifiedDt(), now());
-            if (moreThenThreeDays(term)) {
-                previousOffer.updateOffer(contract);
-                contractRepository.deleteById(prevcontractId);
-                return previousOffer;
+            offer = optionalOffer.get();
+            Long prevcontractId = offer.getContract().getContractId();
+            int term = termChecker.getTerm(offer.getModifiedDt(), now());
+
+            if (afterThreeDays(term)) {
+                updateContractPaper(contract, offer, prevcontractId);
             } else {
                 throw new BeforeReOfferTermException(beforeThreeDays + term);
             }
         }
+        sendContractEmail(offerAgent, player, offer);
+        return offer;
+    }
+
+    private void updateContractPaper(Contract contract, Offer previousOffer, Long prevcontractId) {
+        previousOffer.updateOffer(contract);
+        contractRepository.deleteById(prevcontractId);
+    }
+
+    private void sendContractEmail(Agent offerAgent, Player player, Offer previousOffer) {
+        ContractEmailDto emailDto =
+                emailDto(offerAgent.getAgentName(),
+                        player.getAgent().getEmail(),
+                        previousOffer.getContract());
+        mailService.sendContractMail(emailDto);
     }
 
     @Override
@@ -100,7 +120,7 @@ public class AgentServiceImpl implements AgentService {
                 .orElseThrow(NoSuchDataException::new);
     }
 
-    public boolean moreThenThreeDays(int elapsedDays) {
+    public boolean afterThreeDays(int elapsedDays) {
         return elapsedDays >= 3;
     }
 

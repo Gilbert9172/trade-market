@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sports.trademarket.dto.ContractEmailDto;
 import sports.trademarket.dto.EmailDto;
 import sports.trademarket.dto.EmailGenerateDto;
 import sports.trademarket.dto.EmailVerifyDto;
@@ -19,18 +21,21 @@ import java.util.Optional;
 import static sports.trademarket.exceptions.spring.ErrorConstants.failedVerifyEmail;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
     private final RedisUtil redisUtil;
     private final JavaMailSender javaMailSender;
 
-    final int codeLength = 6;
-    final String subject = "안녕하세요 Trade-Market 입니다.";
-    final String text = "이메일 인증을 위한 인증번호입니다. >>> ";
+
 
     @Override
     public void sendMail(EmailDto emailDto) {
+
+        final int codeLength = 6;
+        final String subject = "안녕하세요 Trade-Market 입니다.";
+        final String text = "이메일 인증을 위한 인증번호입니다. >>> ";
 
         String authKey = generateRandomCode(codeLength);
 
@@ -43,6 +48,30 @@ public class MailServiceImpl implements MailService {
                 .build();
 
         sendAuthEmail(generateDto);
+    }
+
+    @Override
+    public void sendContractMail(ContractEmailDto contractEmailDto) {
+
+        String currencyUnit = contractEmailDto.getCurrencyUnit().name();
+
+        final String subject = "안녕하세요 에이전트 "+ contractEmailDto.getAgentName() + "입니다.";
+        final String text =
+                "<h1>제안서 입니다.</h1>"
+                + "<br>"
+                + "이적료 : " + contractEmailDto.getTransferFee()  + currencyUnit + "<br>"
+                + "연봉 : " + contractEmailDto.getPayment() + currencyUnit + "<br>"
+                + "계약 형태 : " + contractEmailDto.getContractDivision().name() + "<br>"
+                + "계약 기간 : " + contractEmailDto.getContractYear() + "년 " + contractEmailDto.getContractMonth() + "개월" + "<br>"
+                + "추가 옵션 : " + contractEmailDto.getOptions();
+
+        EmailGenerateDto generateDto = EmailGenerateDto.builder()
+                .receiverEmail(contractEmailDto.getReceiverEmail())
+                .subject(subject)
+                .text(text)
+                .build();
+
+        generateAndSendEmail(generateDto);
     }
 
     @Override
