@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.data.domain.Sort.Direction.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -55,12 +56,13 @@ class PlayerRepositoryTest {
             players.add(soccer);
         }
         PageRequest pageRequest =
-                PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "name"));
+                PageRequest.of(0, 4, Sort.by(DESC, "name"));
         //when
         Page<Player> result = playerRepository.findClientByAgentId(agent.getAgentId(), pageRequest);
 
         //then
         assertThat(players.size()).isEqualTo(result.getTotalElements());
+        assertThat(result.getTotalPages()).isEqualTo(3);
     }
 
 }

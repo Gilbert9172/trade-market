@@ -33,7 +33,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String[] EXCLUDE_URL = {"/swagger-ui", "/swagger-resources", "/v2/api-docs",
                                 "/v1/agent/login","/v1/agent/join",
                                 "/v1/agency", "/v1/email", "/v1/player"};
-        log.info("경로 = {}", request.getServletPath());
         return Arrays.stream(EXCLUDE_URL).anyMatch(url -> request.getServletPath().startsWith(url));
     }
 
