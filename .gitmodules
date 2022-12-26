@@ -1,0 +1,3 @@
+[submodule "trade-market-config"]
+	path = trade-market-config
+	url = https://github.com/Gilbert9172/trade-market-config.git
