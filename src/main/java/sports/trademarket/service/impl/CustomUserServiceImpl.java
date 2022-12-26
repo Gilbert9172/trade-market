@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sports.trademarket.dto.CustomUserDetails;
 import sports.trademarket.entity.Agent;
-import sports.trademarket.exceptions.NoSuchUserException;
+import sports.trademarket.exceptions.security.NoSuchUserException;
 import sports.trademarket.repository.AgentRepository;
 import sports.trademarket.service.CustomUserDetailsService;
 

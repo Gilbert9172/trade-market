@@ -1,6 +1,7 @@
 package sports.trademarket.entity;
 
 import lombok.*;
+import sports.trademarket.dto.AgencyJoinDto;
 import sports.trademarket.entity.commonEntity.CommonTimeEntity;
 import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
@@ -21,6 +22,9 @@ public class Agency extends CommonTimeEntity {
     @Column(name = "AGENCY_ID")
     public Long agencyId;
 
+    @Column(name = "AGENCY_NAME")
+    public String agencyName;
+
     @Column(name = "CEO_NAME")
     public String ceoName;
 
@@ -34,19 +38,31 @@ public class Agency extends CommonTimeEntity {
     @Embedded
     public Address address;
 
-    @Column(name = "HOMEPAGE_URL")
+    @Column(name = "HOMEPAGE_URL", unique = true)
     public String homepageUrl;
 
     @Column(name = "ACTIVE")
     private int active;
 
-    public Agency(String ceoName) {
-        this.ceoName = ceoName;
-    }
-
-    //    @OneToMany(mappedBy = "agency")
+//    @OneToMany(mappedBy = "agency")
 //    private List<Agent> agents = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "agent")
 //    private List<Player> players = new ArrayList<>();
+
+    private Agency (AgencyJoinDto joinDto) {
+        agencyName = joinDto.getAgencyName();
+        ceoName = joinDto.getCeoName();
+        companyType = joinDto.getCompanyType();
+        career = joinDto.getCareer();
+        address = Address.of(joinDto.getCity(),
+                joinDto.getMainAddress(), joinDto.getSubAddress());
+        homepageUrl = joinDto.getHomepageUrl();
+        active = 1;
+    }
+
+    public static Agency toEntity(AgencyJoinDto joinDto) {
+        return new Agency(joinDto);
+    }
+
 }

@@ -1,11 +1,9 @@
 package sports.trademarket.utililty;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import sports.trademarket.entity.Agent;
-import sports.trademarket.entity.enumType.RoleType;
 import sports.trademarket.security.config.KeyConfig;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -15,6 +13,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static sports.trademarket.dto.enumType.AuthConstants.AUTH_HEADER;
+import static sports.trademarket.utililty.ServletReqUtil.getServletRequest;
 
 public class JwtUtil {
 
@@ -75,22 +76,17 @@ public class JwtUtil {
         return header.split(" ")[1];
     }
 
-    public static boolean isValidToken(String token) {
-        return checkClaims(token);
+    public static void isValidToken(String token) {
+        checkClaims(token);
     }
 
     // Refresh-Token Validation
-    public static boolean isValidRefreshToken(String token) {
-        return checkClaims(token);
+    public static void isValidRefreshToken(String token) {
+        checkClaims(token);
     }
 
-    private static boolean checkClaims(String token) {
-        try {
-            getAllClaimsFromToken(token);
-            return true;
-        } catch (JwtException | NullPointerException e) {
-            return false;
-        }
+    private static void checkClaims(String token) {
+        getAllClaimsFromToken(token);
     }
 
     private static Claims getAllClaimsFromToken(String token) {
@@ -110,6 +106,12 @@ public class JwtUtil {
 
     // Get User Id From claims
     public static Long getIdFromToken(String token) {
-        return (Long) getAllClaimsFromToken(token).get("agentId");
+        return getAllClaimsFromToken(token).get("agentId", Long.class);
+    }
+
+    public static Long agentId() {
+        String bearToken = getServletRequest().getHeader(AUTH_HEADER.getName());
+        String token = getTokenFromBearer(bearToken);
+        return getIdFromToken(token);
     }
 }

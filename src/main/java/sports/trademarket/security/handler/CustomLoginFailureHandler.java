@@ -2,9 +2,9 @@ package sports.trademarket.security.handler;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import sports.trademarket.exceptions.InputNotFoundException;
-import sports.trademarket.exceptions.NoSuchUserException;
-import sports.trademarket.exceptions.WrongPasswordException;
+import sports.trademarket.exceptions.security.InputNotFoundException;
+import sports.trademarket.exceptions.security.NoSuchUserException;
+import sports.trademarket.exceptions.security.WrongPasswordException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

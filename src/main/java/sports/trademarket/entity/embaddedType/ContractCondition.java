@@ -1,7 +1,6 @@
 package sports.trademarket.entity.embaddedType;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sports.trademarket.entity.enumType.ContractDivision;
 import sports.trademarket.entity.enumType.CurrencyUnit;
@@ -10,12 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static lombok.AccessLevel.*;
 
 @Embeddable
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 public class ContractCondition {
 
@@ -33,9 +32,27 @@ public class ContractCondition {
     private CurrencyUnit currencyUnit;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "CONTRACT_DIVISION")
     private ContractDivision contractDivision;
 
     @Column(name = "CONTRACT_EXPIRY_DT")
-    private LocalDateTime contractExpiryDt;
+    private LocalDate contractExpiryDt;
 
+    private ContractCondition(Long transferFee, Long currentPayment, Long expectedPayment,
+                             CurrencyUnit currencyUnit, ContractDivision contractDivision,
+                             LocalDate contractExpiryDt) {
+        this.transferFee = transferFee;
+        this.currentPayment = currentPayment;
+        this.expectedPayment = expectedPayment;
+        this.currencyUnit = currencyUnit;
+        this.contractDivision = contractDivision;
+        this.contractExpiryDt = contractExpiryDt;
+    }
+
+    public static ContractCondition allContractCond(Long transferFee, Long currentPayment, Long expectedPayment,
+                                                    CurrencyUnit currencyUnit, ContractDivision contractDivision,
+                                                    LocalDate contractExpiryDt) {
+        return new ContractCondition(transferFee, currentPayment, expectedPayment,
+                                    currencyUnit, contractDivision, contractExpiryDt);
+    }
 }
