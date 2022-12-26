@@ -55,6 +55,14 @@ dependencies {
     }
 }
 
+task copyPrivate(type: Copy) {
+    copy {
+        from './trade-market-config'
+        include "application-dev.yml"
+        into 'src/main/resources'
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
