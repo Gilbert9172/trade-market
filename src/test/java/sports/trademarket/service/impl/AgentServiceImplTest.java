@@ -187,6 +187,7 @@ class AgentServiceImplTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("최초 이적 제안하기")
     void offerTransfer() throws Exception {
         Player player = new Player(1L, agent, team, position, "메시", 34);
@@ -218,6 +219,7 @@ class AgentServiceImplTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("이미 제안을 한 경우 - 기존 제안 수정")
     void alreadyOfferd() throws Exception {
         Player player = new Player(1L, agent, team, position, "메시", 34);
