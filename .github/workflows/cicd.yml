@@ -36,8 +36,7 @@ jobs:
             NAME: ${{secrets.DOCKER_USER}}
             REPO: trade_market
           run: |
-            docker build -t $REPO .
-            docker tag $REPO:latest $NAME/$REPO:latest
+            docker build -t $NAME/$REPO -f ./DockerFile .
             docker push $NAME/$REPO:latest
 
 
