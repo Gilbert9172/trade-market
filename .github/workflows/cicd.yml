@@ -31,13 +31,13 @@ jobs:
         with:
           username: ${{secrets.DOCKER_USER}}
           password: ${{secrets.DOCKER_PASSWORD}}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_USER }}/trade_market:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USER }}/trade_market:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USER }}/trade_market:buildcache,mode=max
+      - name: build and release to DockerHub
+          env:
+            NAME: ${{secrets.DOCKER_USER}}
+            REPO: trade_market
+          run: |
+            docker build -t $REPO .
+            docker tag $REPO:latest $NAME/$REPO:latest
+            docker push $NAME/$REPO:latest
 
 
