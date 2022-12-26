@@ -20,6 +20,7 @@ public class ErrorResponseConstants {
     private static final String loginAgain              = "다시 로그인 해주세요.";
     private static final String emptyToken              = "헤더에서 토큰을 확인해 주세요.";
     private static final String hasNoAuthorities        = "적절하지 않은 접근입니다.";
+    private static final String newAccessToken          = "기존 토큰이 만료되어 다시 발행했습니다.";
 
     public static String loginSuccessMessage() {
         return msgResponseTemplate(OK, loginSuccess, success);
@@ -55,6 +56,10 @@ public class ErrorResponseConstants {
 
     public static String hasNoAuthorities() {
         return msgResponseTemplate(FORBIDDEN, hasNoAuthorities, fail);
+    }
+
+    public static String newAccessToken(String token) {
+        return msgResponseTemplate(OK, newAccessToken, token);
     }
 
     private static <T> String msgResponseTemplate(HttpStatus httpStatus, String msg, T data) {

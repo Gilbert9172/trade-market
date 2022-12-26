@@ -1,4 +1,4 @@
-package sports.trademarket.exceptions;
+package sports.trademarket.exceptions.security;
 
 import org.springframework.security.core.AuthenticationException;
 
