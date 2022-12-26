@@ -30,7 +30,7 @@ public class AgencyJoinDto {
 
     private String subAddress;
 
-    @Email @NotEmpty
+    @NotEmpty
     private String homepageUrl;
 
     private int career;
