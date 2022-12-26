@@ -32,11 +32,11 @@ jobs:
           username: ${{secrets.DOCKER_USER}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: build and release to DockerHub
-          env:
-            NAME: ${{secrets.DOCKER_USER}}
-            REPO: trade_market
-          run: |
-            docker build -t $NAME/$REPO -f ./DockerFile .
-            docker push $NAME/$REPO:latest
+        env:
+          NAME: ${{secrets.DOCKER_USER}}
+          REPO: trade_market
+        run: |
+          docker build -t $NAME/$REPO -f ./DockerFile .
+          docker push $NAME/$REPO:latest
 
 
