@@ -43,7 +43,7 @@ jobs:
         with:
           host: ${{secrets.EC2_HOST}}
           username: ubuntu
-          key: ${{secrets.EC2_KEY}}
+          key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
             sudo docker stop trade_market_be
