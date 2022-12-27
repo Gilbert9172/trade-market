@@ -47,8 +47,8 @@ jobs:
           script: |
             sudo docker stop trade_market_be
             sudo docker rm trade_market_be
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/trade_market:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/trade_market:latest
+            sudo docker rmi ${{secrets.DOCKER_USERNAME}}/trade_market:latest
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/trade_market:latest
             sudo docker run --name trade_market_be -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/trade_market:latest
 
 
