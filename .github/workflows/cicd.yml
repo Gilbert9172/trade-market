@@ -42,12 +42,12 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           NAME: ${{secrets.DOCKER_USER}}
-          REPO: trade_market
         with:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
           timeout: 60s
+          envs: NAME
           script: |
             sudo docker pull $NAME/trade_market:latest
             sudo docker run --name trade_market_be -d -p 8080:8080 $NAME/trade_market:latest
