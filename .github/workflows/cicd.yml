@@ -35,9 +35,13 @@ jobs:
         env:
           NAME: ${{secrets.DOCKER_USER}}
           REPO: trade_market
+          APP: app
+          NIGNIX: nginx
         run: |
-          docker build --platform linux/amd64 -t $NAME/$REPO -f ./DockerFile .
-          docker push $NAME/$REPO:latest
+          docker build --platform linux/amd64 -t $NAME/$REPO:$APP -f ./DockerFile .
+          docker build --platform linux/amd64 -t $NAME/$REPO:$NGINX -f ./nginx/DockerFile .
+          docker push $NAME/$REPO:$app
+          docker push $NAME/$REPO:$NGINX
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         env:
@@ -51,7 +55,7 @@ jobs:
           script_stop: true
           script: |
             sudo docker-compose -f $COMPOSE down --rmi all 
-            sudo docker pull ${{secrets.DOCKER_USER}}/$REPO:latest
+            sudo docker pull -a ${{secrets.DOCKER_USER}}/$REPO
             sudo docker-compose -f $COMPOSE up -d
 
 
