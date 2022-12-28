@@ -44,12 +44,9 @@ jobs:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
-          timeout: 60s
+          timeout: 120s
           script: |
-            docker stop trade_market_be
-            docker rm trade_market_be
-            docker rmi ${{secrets.DOCKER_USER}}/trade_market:latest
-            docker pull ${{secrets.DOCKER_USER}}/trade_market:latest
-            docker run --name trade_market_be -d -p 8080:8080 ${{secrets.DOCKER_USER}}/trade_market:latest
+            sudo docker pull ${{secrets.DOCKER_USER}}/trade_market:latest
+            sudo docker run --name trade_market_be -d -p 8080:8080 ${{secrets.DOCKER_USER}}/trade_market:latest
 
 
