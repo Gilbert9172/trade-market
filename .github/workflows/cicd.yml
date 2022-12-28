@@ -35,13 +35,11 @@ jobs:
         env:
           NAME: ${{secrets.DOCKER_USER}}
           REPO: trade_market
-          APP: app
-          NIGNIX: nginx
         run: |
           docker build --platform linux/amd64 -t $NAME/$REPO:app -f ./DockerFile .
           docker build --platform linux/amd64 -t $NAME/$REPO:nginx -f ./nginx/DockerFile .
-          docker push $NAME/$REPO:$app
-          docker push $NAME/$REPO:$NGINX
+          docker push $NAME/$REPO:app
+          docker push $NAME/$REPO:nginx
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         env:
