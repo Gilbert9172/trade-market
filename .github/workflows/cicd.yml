@@ -41,9 +41,9 @@ jobs:
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         with:
-          host: ${{secrets.EC2_HOST}}
           username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
+          host: ${{secrets.EC2_HOST}}
+          key: ${{secrets.EC2_KEY}}
           script: |
             docker stop trade_market_be
             docker rm trade_market_be
