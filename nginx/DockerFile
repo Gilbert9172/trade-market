@@ -1,3 +1,11 @@
 FROM nginx:latest
 
 COPY ./nginx/nginx.conf /etc/nginx/conf.d
+
+VOLUME ["/data", "/etc/nginx", "/var/log/nginx"]
+
+WORKDIR /etc/nginx
+
+CMD ["nginx"]
+
+EXPOSE 80
