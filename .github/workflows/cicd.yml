@@ -45,18 +45,18 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           APP: "trade_market"
-          NIGNIX: "nginx"
+          NGINX: "nginx"
           COMPOSE: "/home/ubuntu/compose/docker-compose.yml"
         with:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
-          envs: REPO, CONTNAME, COMPOSE
+          envs: APP, NGINX, COMPOSE
           script_stop: true
           script: |
             sudo docker-compose -f $COMPOSE down --rmi all 
             sudo docker pull ${{secrets.DOCKER_USER}}/$APP:latest
-            sudo docker pull ${{secrets.DOCKER_USER}}/$NIGNIX:latest
+            sudo docker pull ${{secrets.DOCKER_USER}}/$NGINX:latest
             sudo docker-compose -f $COMPOSE up -d
 
 
