@@ -34,12 +34,20 @@
 
 <img width="750" alt="프로젝트구상" src="https://user-images.githubusercontent.com/83274792/208341080-d7daf44f-09c6-4afc-bcdd-6de727ba6afe.png">
 
-• 로컬에서 push 이벤트 발생
+### [ Local ]
 
-• Git Action으로 도커 이미지 빌드
+• master 브랜치에 Git push 
 
-• 어플리케이션을 도커 이미지로 빌드 후 도커허브에 업로드
+<br>
 
-• EC2에서 도커 이미지 pull
+### [ Git Action ]
 
-• 배포완료
+• gradle빌드 및 Docker img 빌드
+
+<br>
+
+### [ Git Action ]
+
+• Docker Hub에서 빌드 된 image pull
+
+• Docker container 실행
