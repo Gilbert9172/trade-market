@@ -35,7 +35,7 @@ jobs:
         env:
           NAME: ${{secrets.DOCKER_USER}}
           APP: trade_market
-          NIGNIX: nginx
+          NGINX: nginx
         run: |
           docker build --platform linux/amd64 -t $NAME/$APP -f ./DockerFile .
           docker build --platform linux/amd64 -t $NAME/$NGINX -f ./nginx/DockerFile .
