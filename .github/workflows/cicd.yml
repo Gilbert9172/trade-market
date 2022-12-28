@@ -47,6 +47,7 @@ jobs:
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
           envs: REPO
+          script_stop: true
           script: |
             sudo docker pull $REPO/trade_market:latest
             sudo docker run -d -p 8080:8080 --name trade_market_be $REPO/trade_market:latest
