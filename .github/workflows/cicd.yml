@@ -42,18 +42,16 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           REPO: "trade_market"
-          CONTNAME: "trade_market_be"
+          COMPOSE: "/home/ubuntu/compose/docker-compose.yml"
         with:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
-          envs: REPO, CONTNAME
+          envs: REPO, CONTNAME, COMPOSE
           script_stop: true
           script: |
-            sudo docker stop $CONTNAME
-            sudo docker rm $CONTNAME
-            sudo docker rmi ${{secrets.DOCKER_USER}}/$REPO:latest
+            sudo docker-compose -f $COMPOSE down --rmi all 
             sudo docker pull ${{secrets.DOCKER_USER}}/$REPO:latest
-            sudo docker run -d -p 8080:8080 --name $CONTNAME ${{secrets.DOCKER_USER}}/$REPO:latest
+            sudo docker-compose -f $COMPOSE up -d
 
 
