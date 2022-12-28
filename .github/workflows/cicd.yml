@@ -38,8 +38,8 @@ jobs:
           APP: app
           NIGNIX: nginx
         run: |
-          docker build --platform linux/amd64 -t $NAME/$REPO:$APP -f ./DockerFile .
-          docker build --platform linux/amd64 -t $NAME/$REPO:$NGINX -f ./nginx/DockerFile .
+          docker build --platform linux/amd64 -t $NAME/$REPO:app -f ./DockerFile .
+          docker build --platform linux/amd64 -t $NAME/$REPO:nginx -f ./nginx/DockerFile .
           docker push $NAME/$REPO:$app
           docker push $NAME/$REPO:$NGINX
       - name: EC2 Docker Run
