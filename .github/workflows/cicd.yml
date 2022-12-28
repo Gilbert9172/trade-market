@@ -44,6 +44,7 @@ jobs:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
+          timeout: 60s
           script: |
             docker stop trade_market_be
             docker rm trade_market_be
