@@ -41,15 +41,19 @@ jobs:
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         env:
-          REPO: "gilbert9172"
+          REPO: "trade_market"
+          CONTNAME: "trade_market_be"
         with:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
-          envs: REPO
+          envs: REPO, CONTNAME
           script_stop: true
           script: |
-            sudo docker pull $REPO/trade_market:latest
-            sudo docker run -d -p 8080:8080 --name trade_market_be $REPO/trade_market:latest
+            sudo docker stop $CONTNAME
+            sudo docker rm $CONTNAME
+            sudo docker rmi ${{secrets.DOCKER_USER}}/$REPO:latest
+            sudo docker pull ${{secrets.DOCKER_USER}}/$REPO:latest
+            sudo docker run -d -p 8080:8080 --name $CONTNAME ${{secrets.DOCKER_USER}}/$REPO:latest
 
 
