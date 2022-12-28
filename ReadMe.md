@@ -42,7 +42,9 @@
 
 ### [ Git Action ]
 
-• gradle빌드 및 Docker img 빌드
+• gradle빌드 
+
+• Docker img 빌드
 
 <br>
 
