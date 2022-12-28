@@ -40,13 +40,16 @@ jobs:
           docker push $NAME/$REPO:latest
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
+        env:
+          NAME: ${{secrets.DOCKER_USER}}
+          REPO: trade_market
         with:
           username: ubuntu
           host: ${{secrets.EC2_HOST}}
           key: ${{secrets.EC2_KEY}}
-          timeout: 120s
+          timeout: 60s
           script: |
-            sudo docker pull ${{secrets.DOCKER_USER}}/trade_market:latest
-            sudo docker run --name trade_market_be -d -p 8080:8080 ${{secrets.DOCKER_USER}}/trade_market:latest
+            sudo docker pull $NAME/trade_market:latest
+            sudo docker run --name trade_market_be -d -p 8080:8080 $NAME/trade_market:latest
 
 
