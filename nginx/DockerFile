@@ -9,6 +9,6 @@ VOLUME ["/data", "/etc/nginx", "/var/log/nginx"]
 
 WORKDIR /etc/nginx
 
-CMD ["nginx"]
+ENTRYPOINT ["nginx"]
 
 EXPOSE 80
