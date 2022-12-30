@@ -20,6 +20,7 @@ import static sports.trademarket.entity.enumType.ContractDivision.LOAN;
 import static sports.trademarket.entity.enumType.ContractStatus.NEGOTIATING;
 import static sports.trademarket.entity.enumType.CurrencyUnit.EURO;
 
+@Disabled
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)

@@ -23,7 +23,7 @@ jobs:
           java-version: '11'
           cache: 'gradle'
       - name: Execute Gradle build
-        run: ./gradlew clean build -x test -Pprofile=dev
+        run: ./gradlew clean build -Pprofile=dev
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Docker Login

@@ -1,6 +1,7 @@
 package sports.trademarket.repository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static sports.trademarket.entity.enumType.ContractDivision.PERMANENT;
 import static sports.trademarket.entity.enumType.CurrencyUnit.EURO;
 import static sports.trademarket.entity.enumType.SkillLevel.ADVANCED;
 
+@Disabled
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
