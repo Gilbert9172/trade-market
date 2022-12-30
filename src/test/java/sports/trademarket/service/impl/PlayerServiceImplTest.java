@@ -1,6 +1,7 @@
 package sports.trademarket.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +67,7 @@ class PlayerServiceImplTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("player 등록")
     void registerPlayer() throws Exception {
 
@@ -104,6 +106,7 @@ class PlayerServiceImplTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("player 중복 X")
     void NotDuplicatedPlayer() throws Exception {
 
