@@ -67,7 +67,6 @@ class PlayerServiceImplTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("player 등록")
     void registerPlayer() throws Exception {
 
@@ -106,7 +105,6 @@ class PlayerServiceImplTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("player 중복 X")
     void NotDuplicatedPlayer() throws Exception {
 

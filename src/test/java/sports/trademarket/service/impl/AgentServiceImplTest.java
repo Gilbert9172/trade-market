@@ -14,6 +14,7 @@ import sports.trademarket.entity.embaddedType.Address;
 import sports.trademarket.entity.enumType.CompanyType;
 import sports.trademarket.exceptions.spring.BeforeReOfferTermException;
 import sports.trademarket.repository.*;
+import sports.trademarket.service.MailService;
 import sports.trademarket.utililty.JwtUtil;
 
 import java.time.LocalDateTime;
@@ -53,6 +54,9 @@ class AgentServiceImplTest {
 
     @Mock
     private ContractRepository contractRepository;
+
+    @Mock
+    private MailService mailService;
 
     @Spy
     @InjectMocks
@@ -187,7 +191,6 @@ class AgentServiceImplTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("최초 이적 제안하기")
     void offerTransfer() throws Exception {
         Player player = new Player(1L, agent, team, position, "메시", 34);
@@ -210,6 +213,7 @@ class AgentServiceImplTest {
         given(playerRepository.findById(any())).willReturn(of(player));
         given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(empty());
         given(offerRepository.save(any())).willReturn(offer);
+        willDoNothing().given(mailService).sendContractMail(any());
 
         //when
         Offer offerTransfer = agentService.offerTransfer(1L, playerId, contractCond);
@@ -219,7 +223,6 @@ class AgentServiceImplTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("이미 제안을 한 경우 - 기존 제안 수정")
     void alreadyOfferd() throws Exception {
         Player player = new Player(1L, agent, team, position, "메시", 34);
@@ -247,9 +250,13 @@ class AgentServiceImplTest {
 
         //given
         given(JwtUtil.agentId()).willReturn(1L);
+        given(agentRepository.findById(any())).willReturn(ofNullable(agent));
+        given(playerRepository.findById(any())).willReturn(of(player));
         given(offerRepository.findPreviousOffer(anyLong(), anyLong())).willReturn(Optional.of(offer));
         given(termChecker.getTerm(any(), any())).willReturn(4);
         willDoNothing().given(contractRepository).deleteById(anyLong());
+        willDoNothing().given(mailService).sendContractMail(any());
+
         //when
         Offer afterModify = agentService.offerTransfer(1L, 1L, newCond);
 
